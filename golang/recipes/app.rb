@@ -1,9 +1,14 @@
 app = search("aws_opsworks_app").first
-Chef::Log.info("********** The app's short name is '#{app['shortname']}' **********")
-Chef::Log.info("********** The app's URL is '#{app['app_source']['url']}' **********")
+app_path = "/opt/#{app['shortname']}"
 
-git "/opt/app" do
+git app_path do
   repository app['app_source']['url']
   reference "master"
   action :sync
+  notifies :run, 'execute[go-build]', :immediately
+end
+
+execute 'go-build' do
+  command "go build -o /usr/local/bin/#{app['shortname']} ."
+  action :nothing
 end
