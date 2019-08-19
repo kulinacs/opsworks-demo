@@ -10,5 +10,6 @@ end
 
 execute 'go-build' do
   command "go build -o /usr/local/bin/#{app['shortname']} ."
+  cwd app_path
   action :nothing
 end
