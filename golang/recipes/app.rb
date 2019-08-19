@@ -5,13 +5,12 @@ git app_path do
   repository app['app_source']['url']
   reference "master"
   action :sync
-  notifies :run, 'execute[go-build]', :immediately
 end
 
 execute 'go-build' do
   command "go build -o /usr/local/bin/#{app['shortname']} ."
   cwd app_path
-  action :nothing
+  action :run
   notifies :restart, "systemd_unit[#{app['shortname']}.service]", :delayed
 end
 
